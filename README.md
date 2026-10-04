@@ -9,7 +9,7 @@ This repository is a self-contained static copy of the Data Primer Explorer. It 
 - `app.js` — dataset loading, full-metadata search, Theme filtering, cards, and detail dialog
 - `translation.js` and `translation.css` — Google Translate integration and translation-control styling
 - `data/datasets.json` — dataset file loaded by the website
-- `data/Data Primer_09_30_2026.csv` — source inventory used for the current export
+- `data/Data Primer_10_3_2026.csv` — source inventory used for the current 142-record export
 - `thumbnails/` — all local dataset thumbnails and fallback images
 - `scripts/update_dataset.py` — optional helper for rebuilding `datasets.json` from a future CSV
 - `.nojekyll` — tells GitHub Pages to serve the files directly
@@ -24,7 +24,7 @@ The website reads `data/datasets.json`. To rebuild it from a new CSV while prese
 python scripts/update_dataset.py path/to/updated-data-primer.csv
 ```
 
-The CSV should retain the current column names. The helper excludes rows missing any essential field: dataset name, description, Theme (`Categories`), or both link fields. Review the generated `data/datasets.json` before publishing.
+The CSV should retain the current column names. The helper represents every CSV row, preserves the `Contributor` field in the underlying JSON for metadata search, and keeps Contributor hidden from cards and detail views. Review the generated `data/datasets.json` before publishing.
 
 If you edit `datasets.json` directly, keep each record's current field names. Search automatically covers every value in each record, including its full description and metadata.
 

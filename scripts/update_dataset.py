@@ -2,7 +2,7 @@
 """Rebuild data/datasets.json from a Data Primer CSV.
 
 Existing thumbnail assignments are preserved by normalized dataset name or URL.
-Rows missing a name, description, theme, or working-link field are skipped.
+Every CSV row is preserved, including the underlying Contributor field.
 """
 
 import argparse
@@ -60,16 +60,12 @@ def main():
             if url:
                 by_url.setdefault(url, thumb)
 
-    records, skipped, next_id = [], [], 1
-    for row_number, row in enumerate(rows, start=2):
+    records, next_id = [], 1
+    for row in rows:
         name = clean(row.get("Dataset Name"))
         description = clean(row.get("Description"))
         category = clean(row.get("Categories"))
         url = clean(row.get("Interactive Graphic Link")) or clean(row.get("More Info Link"))
-        if not all((name, description, category, url)):
-            skipped.append(name or f"row {row_number}")
-            continue
-
         supplied = clean(row.get("Number"))
         record_id = int(supplied) if supplied.isdigit() else next_id
         next_id = max(next_id, record_id + 1)
@@ -84,6 +80,7 @@ def main():
             "moreInfoLabel": clean(row.get("More Information")),
             "moreInfoUrl": clean(row.get("More Info Link")),
             "interactiveUrl": clean(row.get("Interactive Graphic Link")),
+            "contributor": clean(row.get("Contributor")),
         }
         thumb = by_name.get(normalized_name(name))
         if not thumb:
@@ -108,7 +105,6 @@ def main():
     shutil.copyfile(source, data_dir / source.name)
     OUT.write_text(json.dumps(records, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {len(records)} datasets to {OUT}")
-    print(f"Skipped {len(skipped)} incomplete rows: {', '.join(skipped) if skipped else 'none'}")
 
 
 if __name__ == "__main__":
